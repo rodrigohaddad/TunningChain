@@ -57,7 +57,8 @@ class SimulatedAnnealing():
     def choose_next_state_metropolis(self, zipped_candidates, curr_state, curr_state_eval):
         population = list(range(0, len(zipped_candidates) + 1))
         weights = list(list(zip(*zipped_candidates))[1])
-        weights.append(1 - sum(weights) if (1 - sum(weights) > 0) else 0)
+        total_weight = 1 - sum(weights)
+        weights.append(total_weight if (total_weight > 0) else 0)
         state_position = choices(population, weights)
         zipped_candidates.append((curr_state, curr_state_eval, 0))
 
