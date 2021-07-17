@@ -5,9 +5,8 @@ from weightless_neural_network import WeighlessNetwok
 
 
 class SimulatedAnnealing():
-    bounds = [(3, 10), (3, 36), (0.1, 0.9), (3, 10), (3, 10)]
-
-    def __init__(self, steps, temperature, t_function, data):
+    def __init__(self, steps, temperature, t_function, data, bounds = []):
+        self.bounds = [(3, 10), (3, 36), (0.1, 0.9), (3, 10), (3, 10)]
         self.temperature = temperature
         self.t_function = t_function
         self.steps = steps
@@ -17,8 +16,8 @@ class SimulatedAnnealing():
     def objective(self, candidates):
         evals = list()
         for candidate in candidates:
-            trained_wn = self.wn.train(candidate)
-            evals.append(self.wn.eval(trained_wn))
+            pred = self.wn.train(candidate)
+            evals.append(self.wn.eval(pred))
         return evals
 
     def list_candidates(self, curr_state):
@@ -43,11 +42,11 @@ class SimulatedAnnealing():
         m_list = list()
         for candidate, _, diff in zipped_diffs:
             if diff < 0:
-                 m_list.append((candidate, (1/10)*exp(-diff/curr_temp)))
+                 m_list.append((candidate, (1/10)*min(exp(-diff/curr_temp), 1)))
         return m_list
 
     def choose_next_state(self, zipped_candidates):
-        filtered_candidates = list(filter(lambda x: x[1] >= 1, zipped_candidates))
+        filtered_candidates = list(filter(lambda x: x[1] >= 0, zipped_candidates))
         population = list(range(0, len(filtered_candidates)))
         weight = 1/len(filtered_candidates)
         state_position = choices(population, [weight]*len(filtered_candidates))
@@ -66,7 +65,7 @@ class SimulatedAnnealing():
 
     def simulate(self):
         best = self.initial_state
-        best_eval = self.objective()
+        best_eval = self.objective(best)
         curr_state, curr_state_eval = best, best_eval
         curr_temp = self.temperature
 
