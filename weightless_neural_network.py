@@ -18,8 +18,8 @@ class WeighlessNetwok():
         self.x_train = list()
         self.x_test = list()
         for resolution in range(3, 11):
-            self.x_train = self.x_train.append(self.simple_thermometer(x_train, resolution))
-            self.x_test = self.x_test.append(self.simple_thermometer(x_test, resolution))
+            self.x_train.append(self.simple_thermometer(x_train, resolution))
+            self.x_test.append(self.simple_thermometer(x_test, resolution))
 
     def simple_thermometer(self, arr, resolution, minimum = 0, maximum = 255) -> list:
         therm = ThermometerEncoder(
@@ -27,8 +27,10 @@ class WeighlessNetwok():
         return [np.uint8(therm.encode(x)).flatten() for x in arr]
 
     def train(self, parameters):
-        resolution, addressSize, minScore, threshold, discriminatorLimit = parameters
-        clus = wp.ClusWisard(addressSize, minScore, threshold, discriminatorLimit)
+        #resolution, addressSize, minScore, threshold, discriminatorLimit = parameters
+        resolution, addressSize, minScore, threshold = parameters
+        #clus = wp.ClusWisard(addressSize, minScore*0.1, threshold, discriminatorLimit)
+        clus = wp.ClusWisard(addressSize, minScore*0.1, threshold, 5)
         clus.train(self.x_train[resolution-3], self.y_train)
         return clus.classify(self.x_test[resolution-3])
 
