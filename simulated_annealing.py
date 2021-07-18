@@ -20,13 +20,13 @@ class SimulatedAnnealing():
         return self.wn.eval(pred)
 
     def objective(self, candidates):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
             futures_process = [
                 executor.submit(
                     self.train_and_evaluate, candidate
                 ) for candidate in candidates
             ]
-
+            executor.shutdown(wait=True)
             futures, _ = concurrent.futures.wait(futures_process)
             evals = list()
             for future in futures:
