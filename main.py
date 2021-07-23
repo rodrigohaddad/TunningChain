@@ -1,6 +1,5 @@
 from simulated_annealing import SimulatedAnnealing
 import numpy as np
-import math
 
 def load(f):
         return np.load(f)['arr_0']
@@ -10,7 +9,7 @@ def main():
         return t0*beta**t
     def t_function_2(t, t0, beta=0.65):
         return (t0-beta*t)
-    params = [{'steps': 50, 'temperature': 100, 't_function': t_function_1},
+    params = [{'steps': 50, 'temperature': 50, 't_function': t_function_1},
             #{'steps': 10, 'temperature': 10, 't_function': t_function_2}
             ]
 
@@ -20,9 +19,9 @@ def main():
         'y_test': [str(i) for i in load('images/kmnist-test-labels.npz')]}
 
     data_2 = {'x_train': data['x_train'][:300],
-        'x_test': data['x_test'][:30],
+        'x_test': data['x_test'][:50],
         'y_train': data['y_train'][:300],
-        'y_test': data['y_test'][:30]}
+        'y_test': data['y_test'][:50]}
 
     annealing_results = list()
     for kwargs in params:
