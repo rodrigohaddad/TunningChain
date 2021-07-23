@@ -12,8 +12,10 @@ class SimulatedAnnealing():
         self.t_function = t_function
         self.steps = steps
         #self.initial_state = [3, 3, 1, 3, 3]
-        self.initial_state = [3, 3, 1, 3]
+        self.initial_state = [3, 25, 1, 3]
         self.wn = WeighlessNetwok(data)
+        self.list_evals = list()
+        self.list_temps = list()
         self.state_evals = dict()
 
     def train_and_evaluate(self, candidate):
@@ -44,28 +46,7 @@ class SimulatedAnnealing():
 
         candidate_position = int(np.random.uniform()*len(candidates))
         return candidates[candidate_position]
-        
 
-    def choose_next_state(self, zipped_candidates):
-        filtered_candidates = list(filter(lambda x: x[1] >= 0, zipped_candidates))
-        population = list(range(0, len(filtered_candidates)))
-        weight = 1/len(filtered_candidates)
-        state_position = choices(population, [weight]*len(filtered_candidates))
-
-        print('N ', filtered_candidates[state_position[0]])
-        return filtered_candidates[state_position[0]]
-
-    def choose_next_state_metropolis(self, zipped_candidates, curr_state, curr_state_eval):
-        population = list(range(0, len(zipped_candidates) + 1))
-        weights = list(list(zip(*zipped_candidates))[1])
-        total_weight = 1 - sum(weights)
-        weights.append(total_weight if (total_weight > 0) else 0)
-        print('M weights ', weights)
-        state_position = choices(population, weights)
-        zipped_candidates.append((curr_state, curr_state_eval))
-
-        print('M ', zipped_candidates[state_position[0]])
-        return zipped_candidates[state_position[0]]
 
     def choose_next_state_metropolis_1(self, metropolis, curr_state, candidate_state):
         if np.random.uniform() <= metropolis:
@@ -75,13 +56,14 @@ class SimulatedAnnealing():
 
     def metropolis(self, curr_state_eval, candidate_eval, curr_temp):
         diff = candidate_eval-curr_state_eval
-        return 1/(2*len(self.bounds))*min(exp(diff/curr_temp), 1)
+        met = min(exp(diff/curr_temp), 1)
+        return met
 
     def sort_state_candidate(self, curr_state):
         new_state_candidate = list(curr_state)
-        parameter = int(np.random.uniform()*4)
+        parameter = int(np.random.uniform()*len(self.bounds))
         parameter_bounds = self.bounds[parameter]
-        param_value = np.random.uniform(low=parameter_bounds[0], high=parameter_bounds[1]+1)
+        param_value = int(np.random.uniform(low=parameter_bounds[0], high=parameter_bounds[1]+1))
         new_state_candidate[parameter] = param_value
         return new_state_candidate
 
@@ -92,13 +74,16 @@ class SimulatedAnnealing():
         curr_state, curr_state_eval = best, best_eval
         curr_temp = self.temperature
 
+        self.list_temps.append(curr_temp)
+        self.list_evals.append(best_eval)
+
         for i in range(self.steps):
-            candidate = self.choose_list_candidates(curr_state)
-            #candidate = self.sort_state_candidate(curr_state)
+            #candidate = self.choose_list_candidates(curr_state)
+            candidate = self.sort_state_candidate(curr_state)
 
             candidate_eval = self.train_and_evaluate(candidate)
-
-            if (candidate_eval > curr_state_eval):
+            print(curr_state, curr_state_eval)
+            if (candidate_eval >= curr_state_eval):
                 best, best_eval = candidate, candidate_eval 
                 curr_state, curr_state_eval = candidate, candidate_eval        
             else:
@@ -106,6 +91,10 @@ class SimulatedAnnealing():
                 curr_state = self.choose_next_state_metropolis_1(metropolis, 
                                                                 curr_state, 
                                                                 candidate)
+            
             curr_temp = self.t_function(i, self.temperature)
-        return [best, best_eval]
+            self.list_temps.append(curr_temp)
+            self.list_evals.append(best_eval)
+
+        return [best, best_eval, self.list_temps, self.list_evals]
             
