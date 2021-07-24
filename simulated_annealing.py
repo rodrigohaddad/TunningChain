@@ -5,13 +5,15 @@ import numpy as np
 
 
 class SimulatedAnnealing():
-    def __init__(self, data, steps, temperature, t_function, bounds = []):
+    def __init__(self, data, steps, temperature, t_function, bounds = [], start=1, 
+                initial_state=[3, 3, 1, 3, 3]):
+        self.start = start
         self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10), (3, 10)]
         #self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10)]
         self.temperature = temperature
         self.t_function = t_function
         self.steps = steps
-        self.initial_state = [3, 3, 1, 3, 3]
+        self.initial_state = initial_state
         #self.initial_state = [3, 25, 1, 3]
         self.wn = WeighlessNetwok(data)
         self.list_evals = list()
@@ -77,12 +79,12 @@ class SimulatedAnnealing():
         self.list_temps.append(curr_temp)
         self.list_evals.append(best_eval)
 
-        for i in range(1, self.steps):
+        for i in range(self.start, self.steps):
             #candidate = self.choose_list_candidates(curr_state)  
             candidate = self.sort_state_candidate(curr_state)
 
             candidate_eval = self.train_and_evaluate(candidate)
-            print(curr_state, curr_state_eval)
+            print(curr_state, curr_state_eval, i)
             if (candidate_eval >= curr_state_eval):
                 best, best_eval = candidate, candidate_eval 
                 curr_state, curr_state_eval = candidate, candidate_eval        
@@ -95,5 +97,6 @@ class SimulatedAnnealing():
             self.list_temps.append(curr_temp)
             self.list_evals.append(best_eval)
 
+        print(curr_state, curr_temp)
         return [best, best_eval, self.list_temps, self.list_evals]
             

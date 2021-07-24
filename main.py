@@ -14,7 +14,7 @@ def main():
         return (t0-beta*t)
     def t_function_3(t, a=0.5, b=0.65):
         return (a/(log(t+b)))
-    params = [{'steps': 10000, 'temperature': 10000, 't_function': t_function_2},
+    params = [{'steps': 2000, 'temperature': 2000, 't_function': t_function_2},
             #{'steps': 5000, 'temperature': 5000, 't_function': t_function_2}
             ]
 
@@ -23,8 +23,8 @@ def main():
         'y_train': [str(i) for i in load('images/kmnist-train-labels.npz')],
         'y_test': [str(i) for i in load('images/kmnist-test-labels.npz')]}
 
-    x_train, x_test, y_train, y_test = train_test_split(data['x_train'][:800], 
-    data['y_train'][:800], test_size=0.33, stratify=data['y_train'][:800], random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(data['x_train'][:500], 
+    data['y_train'][:500], test_size=0.33, stratify=data['y_train'][:500], random_state=42) #800
     
     data_2 = {'x_train': x_train, #1250
         'x_test': x_test, #500
@@ -33,7 +33,7 @@ def main():
 
     sa = SimulatedAnnealing(data=data_2, **params[0])
     sa_results = sa.simulate()
-    with open('sa_t2_03', 'w') as f:
+    with open('sa_t2_03_2000', 'w') as f:
         json.dump(sa_results, f)
 
     return sa_results
