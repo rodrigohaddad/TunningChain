@@ -27,12 +27,12 @@ class WeighlessNetwok():
         return [np.uint8(therm.encode(x)).flatten() for x in arr]
 
     def train(self, parameters):
-        #resolution, addressSize, minScore, threshold, discriminatorLimit = parameters
-        resolution, addressSize, minScore, threshold = parameters
-        #clus = wp.ClusWisard(addressSize, minScore*0.1, threshold, discriminatorLimit)
-        clus = wp.ClusWisard(addressSize, minScore*0.1, threshold, 6)
+        resolution, addressSize, minScore, threshold, discriminatorLimit = parameters
+        #resolution, addressSize, minScore, threshold = parameters
+        clus = wp.ClusWisard(addressSize, minScore*0.1, threshold, discriminatorLimit)
+        #clus = wp.ClusWisard(addressSize, minScore*0.1, threshold, 6)
         clus.train(self.x_train[resolution-3], self.y_train)
         return clus.classify(self.x_test[resolution-3])
 
     def eval(self, y_pred):
-        return accuracy_score(self.y_test, y_pred, normalize=False)
+        return accuracy_score(self.y_test, y_pred)

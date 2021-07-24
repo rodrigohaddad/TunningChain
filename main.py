@@ -1,17 +1,21 @@
+from math import log
 from simulated_annealing import SimulatedAnnealing
 import numpy as np
+import json
 from sklearn.model_selection import train_test_split
 
 def load(f):
         return np.load(f)['arr_0']
 
 def main():
-    def t_function_1(t, t0, beta=0.65):
+    def t_function_1(t, t0, beta=0.60):
         return t0*beta**t
-    def t_function_2(t, t0, beta=0.65):
+    def t_function_2(t, t0, beta=0.3):
         return (t0-beta*t)
-    params = [{'steps': 1000, 'temperature': 1000, 't_function': t_function_1},
-            #{'steps': 10, 'temperature': 10, 't_function': t_function_2}
+    def t_function_3(t, a=0.5, b=0.65):
+        return (a/(log(t+b)))
+    params = [{'steps': 10000, 'temperature': 10000, 't_function': t_function_2},
+            #{'steps': 5000, 'temperature': 5000, 't_function': t_function_2}
             ]
 
     data = {'x_train': load('images/kmnist-train-imgs.npz'),
@@ -27,13 +31,12 @@ def main():
         'y_train': y_train,
         'y_test': y_test}
 
-    annealing_results = list()
-    for kwargs in params:
-        print(kwargs)
-        sa = SimulatedAnnealing(data=data_2, **kwargs)
-        annealing_results.append(sa.simulate())
+    sa = SimulatedAnnealing(data=data_2, **params[0])
+    sa_results = sa.simulate()
+    with open('sa_t2_03', 'w') as f:
+        json.dump(sa_results, f)
 
-    return annealing_results
+    return sa_results
 
 if __name__ == '__main__':
-    print(main())
+    main()

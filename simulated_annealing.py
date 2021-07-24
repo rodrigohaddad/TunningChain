@@ -6,13 +6,13 @@ import numpy as np
 
 class SimulatedAnnealing():
     def __init__(self, data, steps, temperature, t_function, bounds = []):
-        #self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10), (3, 10)]
-        self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10)]
+        self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10), (3, 10)]
+        #self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10)]
         self.temperature = temperature
         self.t_function = t_function
         self.steps = steps
-        #self.initial_state = [3, 3, 1, 3, 3]
-        self.initial_state = [3, 25, 1, 3]
+        self.initial_state = [3, 3, 1, 3, 3]
+        #self.initial_state = [3, 25, 1, 3]
         self.wn = WeighlessNetwok(data)
         self.list_evals = list()
         self.list_temps = list()
@@ -72,13 +72,13 @@ class SimulatedAnnealing():
         best = self.initial_state
         best_eval = self.train_and_evaluate(best)
         curr_state, curr_state_eval = best, best_eval
-        curr_temp = self.temperature
 
+        curr_temp = self.t_function(0, self.temperature)
         self.list_temps.append(curr_temp)
         self.list_evals.append(best_eval)
 
-        for i in range(self.steps):
-            #candidate = self.choose_list_candidates(curr_state)
+        for i in range(1, self.steps):
+            #candidate = self.choose_list_candidates(curr_state)  
             candidate = self.sort_state_candidate(curr_state)
 
             candidate_eval = self.train_and_evaluate(candidate)
@@ -91,7 +91,6 @@ class SimulatedAnnealing():
                 curr_state = self.choose_next_state_metropolis_1(metropolis, 
                                                                 curr_state, 
                                                                 candidate)
-            
             curr_temp = self.t_function(i, self.temperature)
             self.list_temps.append(curr_temp)
             self.list_evals.append(best_eval)
