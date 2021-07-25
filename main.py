@@ -8,13 +8,13 @@ def load(f):
         return np.load(f)['arr_0']
 
 def main():
-    def t_function_1(t, t0, beta=0.60):
+    def t_function_1(t, t0, beta=0.9):
         return t0*beta**t
     def t_function_2(t, t0, beta=0.3):
         return (t0-beta*t)
     def t_function_3(t, t0, a=2000, b=1000):
         return (a/(log(t+b)))
-    params = [{'steps': 2000, 'temperature': 2000, 't_function': t_function_3},
+    params = [{'steps': 5000, 'temperature': 250000, 't_function': t_function_1},
             #{'steps': 5000, 'temperature': 5000, 't_function': t_function_2}
             ]
 
@@ -33,7 +33,7 @@ def main():
 
     sa = SimulatedAnnealing(data=data_2, **params[0])
     sa_results = sa.simulate()
-    with open('sa_t3_2000_1000', 'w') as f:
+    with open('sa_t1_09_250000', 'w') as f:
         json.dump(sa_results, f)
 
     return sa_results
