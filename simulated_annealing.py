@@ -6,7 +6,8 @@ import numpy as np
 
 class SimulatedAnnealing():
     def __init__(self, data, steps, temperature, t_function, bounds = [], start=1, 
-                initial_state=[3, 3, 1, 3, 3]):
+                #initial_state=[3, 3, 1, 3, 3]):
+                initial_state=[5, 5, 5, 5, 5]):
         self.start = start
         self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10), (3, 10)]
         #self.bounds = [(3, 10), (3, 36), (1, 9), (3, 10)]
