@@ -12,9 +12,9 @@ def main():
         return t0*beta**t
     def t_function_2(t, t0, beta=0.3):
         return (t0-beta*t)
-    def t_function_3(t, a=0.5, b=0.65):
+    def t_function_3(t, t0, a=2000, b=1000):
         return (a/(log(t+b)))
-    params = [{'steps': 2000, 'temperature': 2000, 't_function': t_function_2},
+    params = [{'steps': 2000, 'temperature': 2000, 't_function': t_function_3},
             #{'steps': 5000, 'temperature': 5000, 't_function': t_function_2}
             ]
 
@@ -33,7 +33,7 @@ def main():
 
     sa = SimulatedAnnealing(data=data_2, **params[0])
     sa_results = sa.simulate()
-    with open('sa_t2_03_2000', 'w') as f:
+    with open('sa_t3_2000_1000', 'w') as f:
         json.dump(sa_results, f)
 
     return sa_results
